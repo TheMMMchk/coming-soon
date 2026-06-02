@@ -43,7 +43,7 @@
             color: #fff;
             text-decoration: none;
             border-radius: 999px;
-            transition: transform .18s ease, box-shadow .18s ease;
+            transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
             cursor: pointer;
             border: none;
             font-weight: 700;
@@ -51,6 +51,31 @@
             box-shadow: 0 6px 18px rgba(124,44,255,0.18);
             position: relative;
             overflow: hidden;
+        }
+
+        .btn.disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            box-shadow: 0 4px 12px rgba(124,44,255,0.12);
+        }
+
+        .like-message {
+            opacity: 0;
+            transform: translateY(10px);
+            margin-top: 18px;
+            color: #4a3db5;
+            font-weight: 600;
+            transition: opacity .4s ease, transform .4s ease;
+            font-size: 17px;
+        }
+
+        .like-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .like-message strong {
+            color: #7c2cff;
         }
 
         .btn::after {
@@ -92,7 +117,96 @@
         <h1>СКОРО</h1>
         <p>TheMMM.ru ждёт запуска.</p>
         <p>Чем больше лайков - тем больше мне мотивации и вскоре сайт будет готов!</p>
-        <a href="https://easycode-lab.ru" target="_blank" rel="noopener noreferrer" class="btn">Поставте лайк пж :3</a>
+        <button id="like-button" class="btn" type="button">Поставь лайк :3</button>
+        <div id="likeMessage" class="like-message" aria-live="polite"></div>
     </main>
+    <script async src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
+    <script>
+        function initCounter() {
+            console.log('initCounter called, Counter defined:', typeof Counter !== 'undefined');
+            
+            if (typeof Counter === 'undefined') {
+                console.log('Counter not ready, retrying in 100ms...');
+                setTimeout(initCounter, 100);
+                return;
+            }
+
+            console.log('Counter loaded successfully');
+            
+            const likeButton = document.getElementById('like-button');
+            const likeMessage = document.getElementById('likeMessage');
+            const storageKey = 'comingSoonLiked';
+            const counterName = 'themmmru-likes';
+            
+            console.log('Creating counter with workspace: matvey-emelyanovs-team-4321');
+            const counter = new Counter({ workspace: 'matvey-emelyanovs-team-4321' });
+            const alreadyLiked = localStorage.getItem(storageKey) === 'true';
+
+            function showLikeMessage(count) {
+                likeMessage.innerHTML = 'Количество лайков - <strong>' + count + '</strong>';
+                likeMessage.classList.add('show');
+            }
+
+            function disableButton() {
+                likeButton.textContent = 'Вы уже поставили лайк';
+                likeButton.classList.add('disabled');
+                likeButton.disabled = true;
+            }
+
+            function setButtonCount(count) {
+                likeButton.textContent = 'Поставь лайк :3 (' + count + ')';
+            }
+
+            console.log('Fetching counter value for:', counterName);
+            counter.get(counterName)
+                .then(result => {
+                    console.log('Counter get result:', result);
+                    const count = result.data?.up_count ?? result.count ?? 0;
+                    setButtonCount(count);
+                    if (alreadyLiked) {
+                        disableButton();
+                        showLikeMessage(count);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error getting counter:', err);
+                    likeMessage.textContent = 'Не удалось загрузить счётчик.';
+                    likeMessage.classList.add('show');
+                });
+
+            likeButton.addEventListener('click', function() {
+                console.log('Like button clicked, alreadyLiked:', alreadyLiked);
+                if (alreadyLiked) return;
+
+                console.log('Incrementing counter...');
+                counter.up(counterName)
+                    .then(result => {
+                        console.log('Counter up result:', result);
+                        const count = result.data?.up_count ?? result.count ?? 0;
+                        localStorage.setItem(storageKey, 'true');
+                        disableButton();
+                        showLikeMessage(count);
+                    })
+                    .catch(err => {
+                        console.error('Error incrementing counter:', err);
+                        likeMessage.textContent = 'Ошибка при отправке лайка. Попробуйте позже.';
+                        likeMessage.classList.add('show');
+                    });
+            });
+        }
+
+        console.log('Script loaded, waiting for DOM ready...');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM ready, calling initCounter');
+            initCounter();
+        });
+        
+        if (document.readyState === 'loading') {
+            console.log('Document still loading');
+        } else {
+            console.log('Document already ready, calling initCounter directly');
+            initCounter();
+        }
+    </script>
 </body>
 </html>
