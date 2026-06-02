@@ -23,13 +23,18 @@
             box-shadow: 0 4px 8px rgba(56, 56, 56, 0.1);
         }
         h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            font-family: Impact, sans-serif;
+            font-size: 40px;
+            margin-bottom: 0;
         }
         p {
             font-size: 18px;
             color: #555;
+        }
+        .time {
+            font-size: 48px;
+            margin: 4px 0 20px;
+            font-family: Impact, sans-serif;
+            color: #000000;
         }
         a {
             color: #ff0077;
@@ -114,7 +119,10 @@
 </head>
 <body>
     <main>
-        <h1>СКОРО</h1>
+        <div>
+        <h1>До запуска осталось</h1>
+        <p id="countdown" class="time">00:00:00</p>
+        </div>
         <p>TheMMM.ru ждёт запуска.</p>
         <p>Чем больше лайков - тем больше мне мотивации и вскоре сайт будет готов!</p>
         <button id="like-button" class="btn" type="button">Поставь лайк :3</button>
@@ -122,6 +130,50 @@
     </main>
     <script async src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
     <script>
+        function formatTimeUnit(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function getNextDeadline() {
+            const now = new Date();
+            const deadline = new Date(now);
+            deadline.setHours(17, 0, 0, 0);
+
+            if (now >= deadline) {
+                deadline.setDate(deadline.getDate() + 1);
+            }
+
+            return deadline;
+        }
+
+        function isAfterJune2At17(now) {
+            return now.getMonth() === 5 && now.getDate() === 2 && now.getHours() >= 17;
+        }
+
+        function updateCountdown() {
+            const countdownEl = document.getElementById('countdown');
+            if (!countdownEl) return;
+
+            const now = new Date();
+            if (isAfterJune2At17(now)) {
+                countdownEl.textContent = 'Запускаем...';
+                return;
+            }
+
+            const deadline = getNextDeadline();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                countdownEl.textContent = '17:00 наступило';
+                return;
+            }
+
+            const seconds = Math.floor(diff / 1000) % 60;
+            const minutes = Math.floor(diff / (1000 * 60)) % 60;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            countdownEl.textContent = `${formatTimeUnit(hours)}:${formatTimeUnit(minutes)}:${formatTimeUnit(seconds)}`;
+        }
+
         function initCounter() {
             console.log('initCounter called, Counter defined:', typeof Counter !== 'undefined');
             
@@ -198,6 +250,8 @@
         console.log('Script loaded, waiting for DOM ready...');
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM ready, calling initCounter');
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
             initCounter();
         });
         
@@ -205,6 +259,8 @@
             console.log('Document still loading');
         } else {
             console.log('Document already ready, calling initCounter directly');
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
             initCounter();
         }
     </script>
