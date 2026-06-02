@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СКОРО</title>
+    <link rel="shortcut icon" href="favicon-32x32.png" type="image/png" sizes="32x32"/>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #dfdfdf;
+        }
+        main {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(56, 56, 56, 0.1);
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-family: Impact, sans-serif;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+        a {
+            color: #ff0077;
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg,#8b5cf6 0%,#7c2cff 70%,#ff5fb8 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 999px;
+            transition: transform .18s ease, box-shadow .18s ease;
+            cursor: pointer;
+            border: none;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            box-shadow: 0 6px 18px rgba(124,44,255,0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 300%;
+            height: 300%;
+            transform: translate(-50%, -50%) scale(0);
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 40%);
+            transition: transform .5s ease;
+            pointer-events: none;
+        }
+
+        .btn:hover::after { transform: translate(-50%, -50%) scale(1); }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(124,44,255,0.22); }
+        .btn:active { transform: translateY(-1px) scale(.995); }
+        .btn:focus { outline: 3px solid rgba(124,44,255,0.18); outline-offset: 4px; }
+
+        .btn {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>СКОРО</h1>
+        <p>TheMMM.ru ждёт запуска.</p>
+        <p>Чем больше лайков - тем больше мне мотивации и вскоре сайт будет готов!</p>
+        <a href="https://easycode-lab.ru" target="_blank" rel="noopener noreferrer" class="btn">Поставте лайк пж :3</a>
+    </main>
+</body>
+</html>
